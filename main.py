@@ -2,6 +2,8 @@ from tkinter import *
 import googletrans
 from tkinter import ttk, messagebox
 from googletrans import Translator
+import os
+import sys
 
 
 # Window Setup
@@ -9,7 +11,16 @@ window = Tk()
 window.title("Dji Project - Translator")
 window.geometry("880x500")
 
-icon_photo = PhotoImage(file='icon.png')
+def resource_path(relative_path):
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+icon_photo = PhotoImage(file=resource_path("icon.png"))
 window.iconphoto(False, icon_photo)
 
 # Functions
@@ -61,7 +72,6 @@ languages = googletrans.LANGUAGES
 
 # Convert the dictionary to the list
 language_list = list(languages.values())
-print(language_list.index("german"))
 
 # Combo boxes
 original_combo = ttk.Combobox(window, width=50, value=language_list)

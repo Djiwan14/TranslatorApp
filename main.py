@@ -13,7 +13,32 @@ window.iconphoto(False, icon_photo)
 
 # Functions
 def translate():
-    pass
+    """ We get the value of the language from the dropdown and with the help of that we get the key from languages
+    dictionary. """
+    # Clean All Previous Texts
+    translator.delete(1.0, END)
+    try:
+        # Get Languages From Dictionary Keys
+        for key, value in languages.items():
+            if value == original_combo.get():
+                from_language_key = key
+
+        for key, value in languages.items():
+            if value == translated_combo.get():
+                to_language_key = key
+
+        # In order to interact with textbox field, we have to specify the boundaries that words should be in
+        # Turn original text to the TextBlob
+        words = textblob.Textblob(original_text.get(1.0, END))
+
+        # Translate text
+        words = words.translate(from_lang=from_language_key, to_lang=to_language_key)
+
+        # Output the translated text to the screen
+        translated_text.insert(1.0, words)
+
+    except Exception as e:
+        messagebox.showerror("Tranlator", e)
 
 def clear():
     """CLear text boxes"""
@@ -35,15 +60,19 @@ translate_button.grid(row=0, column=1, padx=10)
 clear_button = Button(window, text="Clear", command=clear)
 clear_button.grid(row=2, column=1)
 
-language_list = [1, 2, 3, 4, 4, 4 ,45, 4, 2, 2, 8, 9, 9, 4, 87, 6, 8, 1, 4, 4, 8, 4, 2]
+# Grab the Language List from GoogleTrans
+languages = googletrans.LANGUAGES
+
+# Convert the dictionary to the list
+language_list = list(languages.values())
 
 # Combo boxes
 original_combo = ttk.Combobox(window, width=50, value=language_list)
-original_combo.current(21)
+original_combo.current(57)
 original_combo.grid(row=1, column=0)
 
 translated_combo = ttk.Combobox(window, width=50, value=language_list)
-translated_combo.current(22)
+translated_combo.current(72)
 translated_combo.grid(row=1, column=2)
 
 window.mainloop()

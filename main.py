@@ -1,7 +1,8 @@
 from tkinter import *
 import googletrans
-import textblob
 from tkinter import ttk, messagebox
+from googletrans import Translator
+
 
 # Window Setup
 window = Tk()
@@ -12,30 +13,26 @@ icon_photo = PhotoImage(file='icon.png')
 window.iconphoto(False, icon_photo)
 
 # Functions
-def translate():
+def translate_it():
     """ We get the value of the language from the dropdown and with the help of that we get the key from languages
     dictionary. """
     # Clean All Previous Texts
-    translator.delete(1.0, END)
+    translated_text.delete(1.0, END)
     try:
         # Get Languages From Dictionary Keys
-        for key, value in languages.items():
-            if value == original_combo.get():
-                from_language_key = key
-
-        for key, value in languages.items():
-            if value == translated_combo.get():
-                to_language_key = key
+        from_language_key = [key for key, value in languages.items() if value == original_combo.get()][0]
+        to_language_key = [key for key, value in languages.items() if value == translated_combo.get()][0]
 
         # In order to interact with textbox field, we have to specify the boundaries that words should be in
         # Turn original text to the TextBlob
-        words = textblob.Textblob(original_text.get(1.0, END))
+        original_words = original_text.get(1.0, END)
 
         # Translate text
-        words = words.translate(from_lang=from_language_key, to_lang=to_language_key)
+        translator = Translator()
+        translated = translator.translate(original_words, src=from_language_key, dest=to_language_key)
 
         # Output the translated text to the screen
-        translated_text.insert(1.0, words)
+        translated_text.insert(1.0, translated.text)
 
     except Exception as e:
         messagebox.showerror("Tranlator", e)
@@ -53,8 +50,7 @@ translated_text = Text(window, height=10, width=40)
 translated_text.grid(column=2, row=0, pady=20, padx=10)
 
 #Buttons
-
-translate_button = Button(window, text="Translate!", font=("Helvetica", 24), command=translate)
+translate_button = Button(window, text="Translate!", font=("Helvetica", 24), command=translate_it)
 translate_button.grid(row=0, column=1, padx=10)
 
 clear_button = Button(window, text="Clear", command=clear)
@@ -65,14 +61,15 @@ languages = googletrans.LANGUAGES
 
 # Convert the dictionary to the list
 language_list = list(languages.values())
+print(language_list.index("german"))
 
 # Combo boxes
 original_combo = ttk.Combobox(window, width=50, value=language_list)
-original_combo.current(57)
+original_combo.current(21)
 original_combo.grid(row=1, column=0)
 
 translated_combo = ttk.Combobox(window, width=50, value=language_list)
-translated_combo.current(72)
+translated_combo.current(30)
 translated_combo.grid(row=1, column=2)
 
 window.mainloop()
